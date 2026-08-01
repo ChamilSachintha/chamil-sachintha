@@ -328,6 +328,7 @@ body {
   color: #e4e4e7;
   margin-bottom: 32px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  transform: translateX(-40px);
 }
 
 .hero-cta-group {
