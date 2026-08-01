@@ -258,10 +258,11 @@ body {
 .hero-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 180px;
+  gap: 280px;
   align-items: center;
   margin-top: auto;
   margin-bottom: auto;
+  max-width: 1400px;
 }
 
 .hero-left {
