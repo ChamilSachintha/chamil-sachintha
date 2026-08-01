@@ -274,7 +274,7 @@ body {
 }
 
 .hero-title {
-  font-size: 82px;
+  font-size: 110px;
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -2px;
@@ -282,13 +282,6 @@ body {
   margin-bottom: 0;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   text-align: right;
-}
-
-.hero-title .name-solid {
-  font-size: 115px;
-  font-weight: 800;
-  line-height: 0.9;
-  display: inline-block;
 }
 
 .hero-title .text-outline {
