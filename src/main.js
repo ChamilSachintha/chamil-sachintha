@@ -94,10 +94,29 @@ function updateActiveNavLink() {
   });
 }
 
+const navbar = document.querySelector('.navbar');
+let lastScrollY = window.scrollY || 0;
+
+function updateNavbarVisibility() {
+  if (!navbar) return;
+  const currentScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+
+  if (currentScrollY <= 50) {
+    navbar.classList.remove('navbar--hidden');
+  } else if (currentScrollY > lastScrollY + 5) {
+    navbar.classList.add('navbar--hidden');
+  } else if (currentScrollY < lastScrollY - 5) {
+    navbar.classList.remove('navbar--hidden');
+  }
+
+  lastScrollY = currentScrollY;
+}
+
 function renderLoop(time) {
   lenis.raf(time);
   updateScrollTarget();
   updateActiveNavLink();
+  updateNavbarVisibility();
 
   // Linear Interpolation (lerp) for liquid-smooth animation transitions
   const diff = targetFrame - currentFrame;
