@@ -284,6 +284,13 @@ body {
   text-align: right;
 }
 
+.hero-title .name-solid {
+  font-size: 115px;
+  font-weight: 800;
+  line-height: 0.9;
+  display: inline-block;
+}
+
 .hero-title .text-outline {
   color: transparent;
   -webkit-text-fill-color: transparent;
