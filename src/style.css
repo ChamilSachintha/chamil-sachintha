@@ -37,13 +37,16 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-dark);
 }
+
 ::-webkit-scrollbar-thumb {
   background: #2a2a35;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f52;
 }
@@ -196,7 +199,8 @@ body {
   position: relative;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   color: #ffffff;
 }
 
@@ -643,12 +647,15 @@ body {
 .thumb-1 {
   background: radial-gradient(circle at center, rgba(255, 85, 0, 0.25) 0%, rgba(11, 11, 14, 0.7) 80%);
 }
+
 .thumb-2 {
   background: radial-gradient(circle at center, rgba(50, 50, 80, 0.3) 0%, rgba(11, 11, 14, 0.7) 80%);
 }
+
 .thumb-3 {
   background: radial-gradient(circle at center, rgba(255, 120, 0, 0.2) 0%, rgba(11, 11, 14, 0.7) 80%);
 }
+
 .thumb-4 {
   background: linear-gradient(135deg, rgba(30, 30, 40, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%);
 }
@@ -985,15 +992,20 @@ body {
     grid-template-columns: 1fr;
     gap: 30px;
   }
+
   .hero-right {
     margin-left: 0;
   }
+
   .hero-title {
     font-size: 64px;
   }
-  .services-grid, .projects-grid {
+
+  .services-grid,
+  .projects-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .process-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1003,15 +1015,19 @@ body {
   .nav-links {
     display: none;
   }
+
   .hero-title {
     font-size: 48px;
   }
+
   .about-grid {
     grid-template-columns: 1fr;
   }
+
   .process-grid {
     grid-template-columns: 1fr;
   }
+
   .contact-details-row {
     flex-direction: column;
     align-items: flex-start;
