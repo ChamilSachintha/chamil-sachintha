@@ -118,7 +118,7 @@ body {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -239,19 +239,50 @@ body {
   padding: 80px 0;
 }
 
-/* Hero Section */
+/* Rearranged Hero Section Matching Reference Layout */
 .hero-section {
   min-height: 100vh;
-  padding-top: 140px;
-  padding-bottom: 60px;
+  padding-top: 130px;
+  padding-bottom: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
 }
 
-.hero-content {
-  max-width: 650px;
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.hero-left {
+  display: flex;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 82px;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  color: #ffffff;
+  margin-bottom: 0;
+}
+
+.hero-title .dot {
+  color: var(--accent-orange);
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 480px;
+  margin-left: auto;
 }
 
 .tagline-tag {
@@ -260,20 +291,7 @@ body {
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--accent-orange);
-  margin-bottom: 16px;
-}
-
-.hero-title {
-  font-size: 76px;
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -1.5px;
-  color: #ffffff;
-  margin-bottom: 24px;
-}
-
-.hero-title .dot {
-  color: var(--accent-orange);
+  margin-bottom: 12px;
 }
 
 .hero-subtitle {
@@ -288,15 +306,61 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--text-muted);
-  margin-bottom: 36px;
-  max-width: 500px;
+  margin-bottom: 32px;
 }
 
 .hero-cta-group {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 36px;
+}
+
+.hero-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 24px;
+}
+
+.freelance-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  background: rgba(18, 18, 24, 0.65);
+  backdrop-filter: blur(12px);
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dot-icon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-orange);
+  display: inline-block;
+  box-shadow: 0 0 10px var(--accent-orange);
+}
+
+.badge-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.badge-script {
+  font-family: 'Caveat', cursive;
+  font-size: 22px;
+  color: var(--accent-orange);
+}
+
+.scroll-indicator-horizontal {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-muted);
 }
 
 /* Buttons */
@@ -338,40 +402,6 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
-}
-
-.freelance-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-}
-
-.badge-label {
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.badge-script {
-  font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: var(--accent-orange);
-}
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 30px;
-  left: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  transform: rotate(-90deg);
-  transform-origin: left bottom;
 }
 
 /* Glass Cards */
@@ -637,7 +667,6 @@ body {
   font-weight: 800;
   letter-spacing: 0.8px;
   color: #ffffff;
-
 }
 
 .project-category {
@@ -735,7 +764,6 @@ body {
   line-height: 1.6;
   color: #e4e4e7;
   margin-bottom: 16px;
-
 }
 
 .client-meta {
@@ -920,20 +948,30 @@ body {
 
 /* Media Queries for Responsiveness */
 @media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .hero-right {
+    margin-left: 0;
+  }
+  .hero-title {
+    font-size: 64px;
+  }
   .services-grid, .projects-grid {
     grid-template-columns: repeat(2, 1fr);
   }
   .process-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  .hero-title {
-    font-size: 56px;
-  }
 }
 
 @media (max-width: 768px) {
   .nav-links {
     display: none;
+  }
+  .hero-title {
+    font-size: 48px;
   }
   .about-grid {
     grid-template-columns: 1fr;
