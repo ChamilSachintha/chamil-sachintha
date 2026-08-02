@@ -662,11 +662,28 @@ body {
   margin-left: auto;
 }
 
-.graduate-image {
+.graduate-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.graduate-carousel .graduate-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out, transform 0.5s ease;
+  z-index: 1;
+}
+
+.graduate-carousel .graduate-image.active {
+  opacity: 1;
+  z-index: 2;
 }
 
 .graduate-image-wrapper:hover .graduate-image {

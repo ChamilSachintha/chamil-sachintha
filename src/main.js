@@ -234,6 +234,18 @@ async function preloadImages() {
   });
 }
 
+function initGraduationCarousel() {
+  const images = document.querySelectorAll('.graduate-carousel .graduate-image');
+  if (images.length === 0) return;
+  
+  let currentIndex = 0;
+  setInterval(() => {
+    images[currentIndex].classList.remove('active');
+    currentIndex = (currentIndex + 1) % images.length;
+    images[currentIndex].classList.add('active');
+  }, 4000);
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -245,6 +257,9 @@ async function init() {
 
   // Start progressive loading sequence
   preloadImages();
+
+  // Start graduation photo carousel
+  initGraduationCarousel();
 }
 
 init();
