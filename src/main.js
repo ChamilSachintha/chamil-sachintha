@@ -21,6 +21,8 @@ const lenis = new Lenis({
   touchMultiplier: 2,
 });
 
+lenis.on('scroll', updateScrollTarget);
+
 function getFrameUrl(index) {
   const frameNum = String(index + 1).padStart(3, '0');
   return `/frames/ezgif-frame-${frameNum}.jpg`;
@@ -182,33 +184,61 @@ function loadSingleImage(index) {
   });
 }
 
-async function preloadImages() {
-  // 1. Instantly load the first 5 critical frames so page opens immediately
-  const CRITICAL_COUNT = 5;
-  const criticalPromises = [];
-  for (let i = 0; i < CRITICAL_COUNT; i++) {
-    criticalPromises.push(loadSingleImage(i));
-  }
-  await Promise.all(criticalPromises);
+function loadQueue(indices, maxConcurrency = 6) {
+  let cursor = 0;
+  return new Promise((resolve) => {
+    if (indices.length === 0) return resolve();
+    let active = 0;
 
-  // 2. Dismiss preloader immediately!
+    function next() {
+      if (cursor >= indices.length && active === 0) {
+        return resolve();
+      }
+      while (active < maxConcurrency && cursor < indices.length) {
+        const frameIdx = indices[cursor++];
+        active++;
+        loadSingleImage(frameIdx).finally(() => {
+          active--;
+          next();
+        });
+      }
+    }
+    next();
+  });
+}
+
+async function preloadImages() {
+  // Pass 1: Load critical start frames (0..8) immediately
+  const initialIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  await loadQueue(initialIndices, 8);
+
+  // Dismiss loader immediately so site opens
   hideLoader();
 
-  // 3. Progressively load remaining frames in small non-blocking batches in background
-  const BATCH_SIZE = 8;
-  for (let i = CRITICAL_COUNT; i < TOTAL_FRAMES; i += BATCH_SIZE) {
-    const batch = [];
-    for (let j = i; j < Math.min(i + BATCH_SIZE, TOTAL_FRAMES); j++) {
-      batch.push(loadSingleImage(j));
-    }
-    await Promise.all(batch);
+  // Pass 2: Load keyframes across the entire scroll length (every 4th frame)
+  const keyframeIndices = [];
+  for (let i = 12; i < TOTAL_FRAMES; i += 4) {
+    keyframeIndices.push(i);
   }
+  
+  // Load keyframes in parallel worker pool
+  loadQueue(keyframeIndices, 6).then(() => {
+    // Pass 3: Fill in remaining in-between frames in background
+    const remainingIndices = [];
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      if (!images[i]) {
+        remainingIndices.push(i);
+      }
+    }
+    loadQueue(remainingIndices, 6);
+  });
 }
 
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
   window.addEventListener('scroll', updateScrollTarget, { passive: true });
+  window.addEventListener('touchmove', updateScrollTarget, { passive: true });
 
   // Draw initial frame 0 and start render loop immediately
   requestAnimationFrame(renderLoop);
