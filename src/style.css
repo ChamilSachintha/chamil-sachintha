@@ -925,6 +925,10 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
+.services-container {
+  max-width: 1560px;
+}
+
 /* Services Grid */
 .services-grid {
   display: grid;
