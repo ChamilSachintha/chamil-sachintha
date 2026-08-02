@@ -747,6 +747,35 @@ body {
   margin: 0;
 }
 
+.hz-duration {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Highlight styles for the currently working blocks */
+.hz-item.hz-current .hz-content {
+  background: rgba(255, 85, 0, 0.04);
+  border-color: rgba(255, 85, 0, 0.3);
+  box-shadow: 0 0 20px rgba(255, 85, 0, 0.05);
+}
+
+.hz-item.hz-current .hz-stem {
+  background: rgba(255, 85, 0, 0.5);
+  box-shadow: 0 0 8px rgba(255, 85, 0, 0.3);
+}
+
+.hz-item.hz-current .hz-node {
+  box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+  border-color: rgba(255, 85, 0, 0.5);
+}
+
+.hz-item.hz-current .hz-duration {
+  color: var(--accent-orange-hover);
+}
+
 /* Hover effects */
 .hz-item:hover .hz-node {
   transform: translate(-50%, -50%) scale(1.2);
