@@ -604,7 +604,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-width: 1300px;
+  min-width: 1100px;
   height: 380px;
   padding: 0 30px;
 }
@@ -1254,5 +1254,27 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+  }
+}
+
+/* Responsive adjustments for non-scrollable timeline in desktop and tablet views */
+@media (min-width: 769px) {
+  .hz-timeline-wrapper {
+    overflow-x: visible;
+  }
+  .hz-timeline-track {
+    min-width: auto;
+    width: 100%;
+    padding: 0 40px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hz-item {
+    width: 180px;
+  }
+  .hz-content {
+    width: 210px;
+    padding: 12px 14px;
   }
 }
