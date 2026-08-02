@@ -285,10 +285,18 @@ body {
 }
 
 .hero-title .text-outline {
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 2px #ffffff;
-  text-shadow: none;
+  display: inline-block;
+  width: 100%;
+  max-width: 476px;
+  vertical-align: middle;
+}
+
+.hero-title-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
 }
 
 .hero-title .dot {
