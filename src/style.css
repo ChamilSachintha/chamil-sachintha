@@ -1425,6 +1425,10 @@ body {
     gap: 24px;
   }
 
+  .education-info {
+    padding: 20px;
+  }
+
   .graduate-image-wrapper {
     margin: 0 auto;
   }
