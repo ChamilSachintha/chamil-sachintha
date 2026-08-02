@@ -336,6 +336,37 @@ function initProjectFilters() {
   });
 }
 
+function initProjectLinks() {
+  const iframeCards = document.querySelectorAll('.project-card');
+  
+  iframeCards.forEach(card => {
+    const iframe = card.querySelector('iframe');
+    const wrapper = card.querySelector('.project-iframe-wrapper');
+    if (!iframe || !wrapper) return;
+
+    const src = iframe.getAttribute('src');
+    let targetUrl = '';
+
+    if (src.includes('behance.net')) {
+      const match = src.match(/project\/(\d+)/);
+      if (match) {
+        targetUrl = `https://www.behance.net/gallery/${match[1]}`;
+      }
+    } else if (src.includes('vercel.app')) {
+      targetUrl = src;
+    }
+
+    if (targetUrl) {
+      const link = document.createElement('a');
+      link.href = targetUrl;
+      link.target = '_blank';
+      link.className = 'project-card-overlay-link';
+      link.setAttribute('aria-label', 'Open project in new tab');
+      wrapper.appendChild(link);
+    }
+  });
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -353,6 +384,9 @@ async function init() {
 
   // Start project filtering system
   initProjectFilters();
+
+  // Start project link navigation
+  initProjectLinks();
 }
 
 init();

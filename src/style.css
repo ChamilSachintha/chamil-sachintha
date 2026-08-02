@@ -1060,6 +1060,17 @@ body {
   overflow: hidden;
 }
 
+.project-card-overlay-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background: transparent;
+  cursor: pointer;
+}
+
 .project-card:hover .project-iframe-wrapper {
   transform: translateY(-6px);
   border-color: var(--accent-orange);
