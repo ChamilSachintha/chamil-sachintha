@@ -35,9 +35,30 @@ function resizeCanvas() {
   lastDrawnFrame = -1; // Force redraw on resize
 }
 
+function getNearestLoadedFrame(targetIdx) {
+  if (images[targetIdx] && images[targetIdx].complete && images[targetIdx].naturalWidth > 0) {
+    return targetIdx;
+  }
+  // Search downwards for nearest loaded frame
+  for (let i = targetIdx - 1; i >= 0; i--) {
+    if (images[i] && images[i].complete && images[i].naturalWidth > 0) {
+      return i;
+    }
+  }
+  // Search upwards if no lower frame is loaded
+  for (let i = targetIdx + 1; i < TOTAL_FRAMES; i++) {
+    if (images[i] && images[i].complete && images[i].naturalWidth > 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 function drawFrame(frameIndex) {
-  const img = images[frameIndex];
-  if (!img || !img.complete || img.naturalWidth === 0) return;
+  const readyIdx = getNearestLoadedFrame(frameIndex);
+  if (readyIdx === -1) return;
+  const img = images[readyIdx];
+  if (!img) return;
 
   const dpr = window.devicePixelRatio || 1;
   const canvasWidth = canvas.width / dpr;
@@ -63,7 +84,7 @@ function drawFrame(frameIndex) {
 
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-  lastDrawnFrame = frameIndex;
+  lastDrawnFrame = readyIdx;
 }
 
 function updateScrollTarget() {
@@ -134,38 +155,7 @@ function renderLoop(time) {
   requestAnimationFrame(renderLoop);
 }
 
-function preloadImages() {
-  return new Promise((resolve) => {
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFrameUrl(i);
-      
-      const onComplete = () => {
-        loadedCount++;
-        const percent = Math.floor((loadedCount / TOTAL_FRAMES) * 100);
-        if (loaderText) {
-          loaderText.textContent = `Loading Experience ${percent}%`;
-        }
-        if (loadedCount === TOTAL_FRAMES) {
-          resolve();
-        }
-      };
-
-      img.onload = onComplete;
-      img.onerror = onComplete;
-      images.push(img);
-    }
-  });
-}
-
-async function init() {
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-  window.addEventListener('scroll', updateScrollTarget, { passive: true });
-
-  await preloadImages();
-
-  // Hide loader
+function hideLoader() {
   if (loader) {
     loader.style.opacity = '0';
     loader.style.pointerEvents = 'none';
@@ -173,10 +163,58 @@ async function init() {
       loader.style.display = 'none';
     }, 500);
   }
+}
 
-  // Draw initial frame and launch animation loop
-  drawFrame(0);
+function loadSingleImage(index) {
+  return new Promise((resolve) => {
+    if (images[index]) return resolve(images[index]);
+    const img = new Image();
+    img.src = getFrameUrl(index);
+    img.onload = () => {
+      images[index] = img;
+      loadedCount++;
+      resolve(img);
+    };
+    img.onerror = () => {
+      images[index] = null;
+      resolve(null);
+    };
+  });
+}
+
+async function preloadImages() {
+  // 1. Instantly load the first 5 critical frames so page opens immediately
+  const CRITICAL_COUNT = 5;
+  const criticalPromises = [];
+  for (let i = 0; i < CRITICAL_COUNT; i++) {
+    criticalPromises.push(loadSingleImage(i));
+  }
+  await Promise.all(criticalPromises);
+
+  // 2. Dismiss preloader immediately!
+  hideLoader();
+
+  // 3. Progressively load remaining frames in small non-blocking batches in background
+  const BATCH_SIZE = 8;
+  for (let i = CRITICAL_COUNT; i < TOTAL_FRAMES; i += BATCH_SIZE) {
+    const batch = [];
+    for (let j = i; j < Math.min(i + BATCH_SIZE, TOTAL_FRAMES); j++) {
+      batch.push(loadSingleImage(j));
+    }
+    await Promise.all(batch);
+  }
+}
+
+async function init() {
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('scroll', updateScrollTarget, { passive: true });
+
+  // Draw initial frame 0 and start render loop immediately
   requestAnimationFrame(renderLoop);
+
+  // Start progressive loading sequence
+  preloadImages();
 }
 
 init();
