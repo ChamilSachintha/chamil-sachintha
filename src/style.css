@@ -509,6 +509,10 @@ body {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
+.about-left .section-text:not(:last-of-type) {
+  margin-bottom: 16px;
+}
+
 .signature {
   font-family: 'Caveat', cursive;
   font-size: 36px;
