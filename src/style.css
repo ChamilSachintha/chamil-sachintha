@@ -927,44 +927,20 @@ body {
 
 /* Services Grid */
 .services-grid {
-  display: flex;
-  overflow-x: auto;
-  gap: 24px;
-  padding-bottom: 20px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 85, 0, 0.3) rgba(255, 255, 255, 0.03);
-}
-
-.services-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.services-grid::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-}
-
-.services-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 85, 0, 0.3);
-  border-radius: 10px;
-}
-
-.services-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-orange);
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 16px;
 }
 
 .service-card {
-  flex: 0 0 300px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: 36px 24px;
+  padding: 28px 16px;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
-  scroll-snap-align: start;
 }
 
 .service-card:hover {
@@ -1411,6 +1387,11 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
   .process-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1434,6 +1415,11 @@ body {
   .about-grid,
   .experience-grid {
     grid-template-columns: 1fr;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .process-grid {
