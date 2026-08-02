@@ -520,9 +520,10 @@ body {
 }
 
 .stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
+  align-items: flex-end;
 }
 
 .stat-box {
@@ -534,6 +535,7 @@ body {
   flex-direction: column;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
+  width: 240px;
 }
 
 .stat-box:hover {
@@ -1287,6 +1289,10 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+  }
+
+  .stats-grid {
+    align-items: center;
   }
 }
 
