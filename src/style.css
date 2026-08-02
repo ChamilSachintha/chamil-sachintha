@@ -653,9 +653,9 @@ body {
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--accent-orange);
   aspect-ratio: 4 / 5;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 30px rgba(255, 85, 0, 0.15);
   transition: all 0.3s ease;
   width: 100%;
   max-width: 320px;
@@ -671,11 +671,6 @@ body {
 
 .graduate-image-wrapper:hover .graduate-image {
   transform: scale(1.05);
-}
-
-.graduate-image-wrapper:hover {
-  border-color: var(--accent-orange);
-  box-shadow: 0 12px 30px rgba(255, 85, 0, 0.15);
 }
 
 /* Horizontal Timeline Scroll Wrapper */
