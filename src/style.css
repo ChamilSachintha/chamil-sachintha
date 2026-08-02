@@ -690,6 +690,24 @@ body {
   transform: scale(1.05);
 }
 
+.graduate-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+}
+
+.graduate-carousel-controls .dots-indicator {
+  position: static;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 /* Horizontal Timeline Scroll Wrapper */
 .hz-timeline-wrapper {
   width: 100%;
@@ -1409,6 +1427,10 @@ body {
 
   .graduate-image-wrapper {
     margin: 0 auto;
+  }
+
+  .graduate-carousel-controls {
+    margin: 16px auto 0 auto;
   }
 }
 

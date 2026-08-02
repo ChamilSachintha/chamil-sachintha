@@ -235,15 +235,72 @@ async function preloadImages() {
 }
 
 function initGraduationCarousel() {
-  const images = document.querySelectorAll('.graduate-carousel .graduate-image');
+  const wrapper = document.querySelector('.education-media');
+  if (!wrapper) return;
+
+  const images = wrapper.querySelectorAll('.graduate-carousel .graduate-image');
+  const dots = wrapper.querySelectorAll('.dots-indicator .dot');
+  const prevBtn = wrapper.querySelector('.nav-arrow.prev');
+  const nextBtn = wrapper.querySelector('.nav-arrow.next');
+  
   if (images.length === 0) return;
   
   let currentIndex = 0;
-  setInterval(() => {
+  let intervalId = null;
+
+  function showSlide(index) {
     images[currentIndex].classList.remove('active');
-    currentIndex = (currentIndex + 1) % images.length;
+    if (dots.length > currentIndex) {
+      dots[currentIndex].classList.remove('active');
+    }
+
+    currentIndex = index;
+
     images[currentIndex].classList.add('active');
-  }, 4000);
+    if (dots.length > currentIndex) {
+      dots[currentIndex].classList.add('active');
+    }
+  }
+
+  function startAutoCycle() {
+    stopAutoCycle();
+    intervalId = setInterval(() => {
+      let nextIndex = (currentIndex + 1) % images.length;
+      showSlide(nextIndex);
+    }, 4000);
+  }
+
+  function stopAutoCycle() {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      let prevIndex = (currentIndex - 1 + images.length) % images.length;
+      showSlide(prevIndex);
+      startAutoCycle();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      let nextIndex = (currentIndex + 1) % images.length;
+      showSlide(nextIndex);
+      startAutoCycle();
+    });
+  }
+
+  dots.forEach((dot, idx) => {
+    dot.style.cursor = 'pointer';
+    dot.addEventListener('click', () => {
+      showSlide(idx);
+      startAutoCycle();
+    });
+  });
+
+  startAutoCycle();
 }
 
 async function init() {
