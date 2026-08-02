@@ -303,6 +303,39 @@ function initGraduationCarousel() {
   startAutoCycle();
 }
 
+function initProjectFilters() {
+  const filterTabs = document.querySelectorAll('.project-filters .filter-tab');
+  const projectCards = document.querySelectorAll('.projects-grid .project-card');
+
+  if (filterTabs.length === 0 || projectCards.length === 0) return;
+
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      filterTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const filterValue = tab.getAttribute('data-filter');
+
+      projectCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          const isMatch = filterValue === 'all' || card.getAttribute('data-category') === filterValue;
+          if (isMatch) {
+            card.style.display = 'flex';
+            card.offsetHeight; // Force reflow
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          } else {
+            card.style.display = 'none';
+          }
+        }, 350);
+      });
+    });
+  });
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -317,6 +350,9 @@ async function init() {
 
   // Start graduation photo carousel
   initGraduationCarousel();
+
+  // Start project filtering system
+  initProjectFilters();
 }
 
 init();
