@@ -1057,6 +1057,7 @@ body {
   height: 100%;
   border: none;
   display: block;
+  overflow: hidden;
 }
 
 .project-card:hover .project-iframe-wrapper {
