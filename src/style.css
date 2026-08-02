@@ -530,13 +530,13 @@ body {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: 28px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
-  width: 240px;
+  width: 180px;
   aspect-ratio: 1 / 1;
 }
 
@@ -547,11 +547,11 @@ body {
 }
 
 .stat-icon {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .stat-number {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 800;
   color: #ffffff;
   margin-bottom: 4px;
