@@ -533,9 +533,11 @@ body {
   padding: 28px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
   width: 240px;
+  aspect-ratio: 1 / 1;
 }
 
 .stat-box:hover {
