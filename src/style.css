@@ -1376,6 +1376,7 @@ body {
 
   .hero-right {
     margin-left: 0;
+    transform: none;
   }
 
   .hero-title {
@@ -1399,6 +1400,12 @@ body {
 
   .hero-title {
     font-size: 48px;
+    text-align: left;
+  }
+
+  .hero-left {
+    align-items: flex-start;
+    text-align: left;
   }
 
   .about-grid,
