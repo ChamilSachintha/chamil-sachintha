@@ -337,26 +337,32 @@ function initProjectFilters() {
 }
 
 function initProjectLinks() {
-  const iframeCards = document.querySelectorAll('.project-card');
+  const cards = document.querySelectorAll('.project-card');
   
-  iframeCards.forEach(card => {
-    const iframe = card.querySelector('iframe');
+  cards.forEach(card => {
     const wrapper = card.querySelector('.project-iframe-wrapper');
-    if (!iframe || !wrapper) return;
+    if (!wrapper) return;
 
-    const src = iframe.getAttribute('src');
-    let targetUrl = '';
+    let targetUrl = wrapper.getAttribute('data-link');
 
-    if (src.includes('behance.net')) {
-      const match = src.match(/project\/(\d+)/);
-      if (match) {
-        targetUrl = `https://www.behance.net/gallery/${match[1]}`;
+    if (!targetUrl) {
+      const iframe = card.querySelector('iframe');
+      if (iframe) {
+        const src = iframe.getAttribute('src');
+        if (src.includes('behance.net')) {
+          const match = src.match(/project\/(\d+)/);
+          if (match) {
+            targetUrl = `https://www.behance.net/gallery/${match[1]}`;
+          }
+        } else if (src.includes('vercel.app')) {
+          targetUrl = src;
+        }
       }
-    } else if (src.includes('vercel.app')) {
-      targetUrl = src;
     }
 
     if (targetUrl) {
+      if (wrapper.querySelector('.project-card-overlay-link')) return;
+
       const link = document.createElement('a');
       link.href = targetUrl;
       link.target = '_blank';
