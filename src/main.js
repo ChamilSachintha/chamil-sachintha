@@ -309,19 +309,57 @@ function initProjectFilters() {
 
   if (filterTabs.length === 0 || projectCards.length === 0) return;
 
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      filterTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      const filterValue = tab.getAttribute('data-filter');
-
+  function applyFilter(filterValue) {
+    if (filterValue === 'all') {
+      const categories = ['ui-ux', 'web-mobile', 'branding', 'graphic-design', 'digital-arts'];
+      const groupedCards = {};
+      
+      categories.forEach(cat => {
+        groupedCards[cat] = [];
+      });
+      
+      projectCards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        if (groupedCards[cat]) {
+          groupedCards[cat].push(card);
+        }
+      });
+      
+      const selectedCards = new Set();
+      
+      categories.forEach(cat => {
+        const cards = groupedCards[cat];
+        if (cards.length <= 2) {
+          cards.forEach(c => selectedCards.add(c));
+        } else {
+          const shuffled = [...cards].sort(() => 0.5 - Math.random());
+          selectedCards.add(shuffled[0]);
+          selectedCards.add(shuffled[1]);
+        }
+      });
+      
       projectCards.forEach(card => {
         card.style.opacity = '0';
         card.style.transform = 'scale(0.95)';
         
         setTimeout(() => {
-          const isMatch = filterValue === 'all' || card.getAttribute('data-category') === filterValue;
+          if (selectedCards.has(card)) {
+            card.style.display = 'flex';
+            card.offsetHeight; // Force reflow
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          } else {
+            card.style.display = 'none';
+          }
+        }, 350);
+      });
+    } else {
+      projectCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          const isMatch = card.getAttribute('data-category') === filterValue;
           if (isMatch) {
             card.style.display = 'flex';
             card.offsetHeight; // Force reflow
@@ -332,8 +370,21 @@ function initProjectFilters() {
           }
         }, 350);
       });
+    }
+  }
+
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      filterTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const filterValue = tab.getAttribute('data-filter');
+      applyFilter(filterValue);
     });
   });
+
+  // Apply default 'all' filter on load to select 2 random projects per category
+  applyFilter('all');
 }
 
 function initProjectLinks() {
