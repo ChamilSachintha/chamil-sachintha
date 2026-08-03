@@ -1274,10 +1274,28 @@ body {
 }
 
 .client-name {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 1px;
   color: var(--accent-orange);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.client-meta-divider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 14px;
+}
+
+.client-meta-country {
+  color: var(--text-muted);
+  font-weight: 400;
+  text-transform: none;
+  font-size: 14px;
+  letter-spacing: 0;
 }
 
 .client-role {

@@ -561,15 +561,15 @@ function initTestimonialsSlider() {
       const data = TESTIMONIALS_DATA[currentIndex];
 
       quoteEl.textContent = data.message;
-      nameEl.textContent = data.name;
+      
+      const flagImg = `<img src="https://flagcdn.com/w20/${data.code}.png" alt="${data.country} Flag" class="country-flag" />`;
+      nameEl.innerHTML = `<span>${data.name.toUpperCase()}</span> <span class="client-meta-divider">&bull;</span> <span class="client-meta-country">${data.country}</span> ${flagImg}`;
       
       let roleText = '';
-      const flagImg = `<img src="https://flagcdn.com/w20/${data.code}.png" alt="${data.country} Flag" class="country-flag" />`;
-
       if (data.position && data.position !== 'Client') {
-        roleText = `${data.position} &bull; ${data.role ? data.role + ' &bull; ' : ''}${data.country} ${flagImg}`;
+        roleText = `${data.position}${data.role ? ' &bull; ' + data.role : ''}`;
       } else {
-        roleText = `${data.position} &bull; ${data.country} ${flagImg}`;
+        roleText = data.position;
       }
       roleEl.innerHTML = roleText;
 
