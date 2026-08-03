@@ -431,6 +431,7 @@ const TESTIMONIALS_DATA = [
     position: "BSc Eng. (Hons), PG. Dip(Structural), CEng, MIESL",
     role: "Bridge & Structural Design Engineer",
     country: "Sri Lanka",
+    code: "lk",
     message: "I had privilege of working with Chamil Sachintha when we have joined our hands in organizing of first ever Inter University Debate competition (Engineering) organized by YMS, IESL which was successfully concluded in 2021. Competition was completely held in virtual platform, since the covid pandemic situation and Chamil has done remarkable role as the host throughout the event. As the Chief Organizer of the event, I highly recommend his expertise, dedication and team working skill and any team would be lucky to have Chamil in their team. I wish him every success in all his endeavors."
   },
   {
@@ -439,6 +440,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "UK",
+    code: "gb",
     message: "Number 1! Great to work with! The best guy that I worked with! Superfast! Highly recommended!"
   },
   {
@@ -447,6 +449,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "Japan",
+    code: "jp",
     message: "Perfect work as always! Trustable person! Great communication and took all my revisions and changed them to exactly what if asked for!"
   },
   {
@@ -455,6 +458,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "Hong Kong",
+    code: "hk",
     message: "Good and fast work bro delivery on time thank you so much"
   },
   {
@@ -463,6 +467,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "Brazil",
+    code: "br",
     message: "Very good and fast job 5star"
   },
   {
@@ -471,6 +476,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "Australia",
+    code: "au",
     message: "Time Value great communication Happy returning Customer Thank you so much."
   },
   {
@@ -479,6 +485,7 @@ const TESTIMONIALS_DATA = [
     position: "Client",
     role: "",
     country: "UK",
+    code: "gb",
     message: "The best."
   },
   {
@@ -487,6 +494,7 @@ const TESTIMONIALS_DATA = [
     position: "Chartered Civil Engineer | B.Sc. Eng (Hons) | MIE(SL)",
     role: "Executive Engineer, PRDD, NWP",
     country: "Sri Lanka",
+    code: "lk",
     message: "I met Mr. Chamil Sachintha when I was the Chairman for Young Members Section (YMS) of the Institution of Engineers Sri Lanka (IESL) for the session 2020/21. It was the first time YMS organized the Inter University Debate competition among the seven engineering faculties in SL. We had to conduct the entire event in virtual platform due to the pandemic situation and Mr. Chamil was the one of active members in the organizing committee. He was the host for all the matches. It was a big task since it was the first experience of most of us for having a debate competition in virtual platform. Mr. Chamil did an amazing work and it was miraculous for me to work with this young, energetic and enthusiastic personality."
   },
   {
@@ -495,6 +503,7 @@ const TESTIMONIALS_DATA = [
     position: "AI/ML Engineer | BSc(Hons) Engineering",
     role: "",
     country: "Sri Lanka",
+    code: "lk",
     message: "Chamil is an enthusiastic and passionate person, with a strong background in full-stack, front-end web development, UI/UX design, and related areas. He has a continuous effort to be the best in his professional doings."
   },
   {
@@ -503,6 +512,7 @@ const TESTIMONIALS_DATA = [
     position: "Graphic Designer",
     role: "",
     country: "Pakistan",
+    code: "pk",
     message: "It would a good experience to work with him. He is very Nice and Polite."
   }
 ];
@@ -554,10 +564,12 @@ function initTestimonialsSlider() {
       nameEl.textContent = data.name;
       
       let roleText = '';
+      const flagImg = `<img src="https://flagcdn.com/w20/${data.code}.png" alt="${data.country} Flag" class="country-flag" />`;
+
       if (data.position && data.position !== 'Client') {
-        roleText = `${data.position} &bull; ${data.role ? data.role + ' &bull; ' : ''}${data.country}`;
+        roleText = `${data.position} &bull; ${data.role ? data.role + ' &bull; ' : ''}${data.country} ${flagImg}`;
       } else {
-        roleText = `${data.position} &bull; ${data.country}`;
+        roleText = `${data.position} &bull; ${data.country} ${flagImg}`;
       }
       roleEl.innerHTML = roleText;
 

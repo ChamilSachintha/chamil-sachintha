@@ -1285,6 +1285,16 @@ body {
   color: var(--text-muted);
 }
 
+.country-flag {
+  width: 16px;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  vertical-align: middle;
+  margin-left: 6px;
+  display: inline-block;
+}
+
 .testimonial-controls {
   display: flex;
   align-items: center;
