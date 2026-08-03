@@ -424,6 +424,206 @@ function initProjectLinks() {
   });
 }
 
+const TESTIMONIALS_DATA = [
+  {
+    image: "/images/clients/client_IshanDahanayaka.jpg",
+    name: "Ishan Dahanayaka",
+    position: "BSc Eng. (Hons), PG. Dip(Structural), CEng, MIESL",
+    role: "Bridge & Structural Design Engineer",
+    country: "Sri Lanka",
+    message: "I had privilege of working with Chamil Sachintha when we have joined our hands in organizing of first ever Inter University Debate competition (Engineering) organized by YMS, IESL which was successfully concluded in 2021. Competition was completely held in virtual platform, since the covid pandemic situation and Chamil has done remarkable role as the host throughout the event. As the Chief Organizer of the event, I highly recommend his expertise, dedication and team working skill and any team would be lucky to have Chamil in their team. I wish him every success in all his endeavors."
+  },
+  {
+    image: "/images/clients/client_vasile96.jpg",
+    name: "vasile96",
+    position: "Client",
+    role: "",
+    country: "UK",
+    message: "Number 1! Great to work with! The best guy that I worked with! Superfast! Highly recommended!"
+  },
+  {
+    image: "/images/clients/client_familiaoffice.jpg",
+    name: "familiaoffice",
+    position: "Client",
+    role: "",
+    country: "Japan",
+    message: "Perfect work as always! Trustable person! Great communication and took all my revisions and changed them to exactly what if asked for!"
+  },
+  {
+    image: "/images/clients/client_hussain629.jpg",
+    name: "hussain629",
+    position: "Client",
+    role: "",
+    country: "Hong Kong",
+    message: "Good and fast work bro delivery on time thank you so much"
+  },
+  {
+    image: "/images/clients/client_sergiosombrao.jpg",
+    name: "sergiosombrao",
+    position: "Client",
+    role: "",
+    country: "Brazil",
+    message: "Very good and fast job 5star"
+  },
+  {
+    image: "/images/clients/client_cannoneye.jpg",
+    name: "cannoneye",
+    position: "Client",
+    role: "",
+    country: "Australia",
+    message: "Time Value great communication Happy returning Customer Thank you so much."
+  },
+  {
+    image: "/images/clients/client_entzibasllari.jpg",
+    name: "entzibasllari",
+    position: "Client",
+    role: "",
+    country: "UK",
+    message: "The best."
+  },
+  {
+    image: "/images/clients/client_DamithDisanayaka.jpg",
+    name: "Damith Disanayaka",
+    position: "Chartered Civil Engineer | B.Sc. Eng (Hons) | MIE(SL)",
+    role: "Executive Engineer, PRDD, NWP",
+    country: "Sri Lanka",
+    message: "I met Mr. Chamil Sachintha when I was the Chairman for Young Members Section (YMS) of the Institution of Engineers Sri Lanka (IESL) for the session 2020/21. It was the first time YMS organized the Inter University Debate competition among the seven engineering faculties in SL. We had to conduct the entire event in virtual platform due to the pandemic situation and Mr. Chamil was the one of active members in the organizing committee. He was the host for all the matches. It was a big task since it was the first experience of most of us for having a debate competition in virtual platform. Mr. Chamil did an amazing work and it was miraculous for me to work with this young, energetic and enthusiastic personality."
+  },
+  {
+    image: "/images/clients/client_DineshPiyasamara.jpg",
+    name: "Dinesh Piyasamara",
+    position: "AI/ML Engineer | BSc(Hons) Engineering",
+    role: "",
+    country: "Sri Lanka",
+    message: "Chamil is an enthusiastic and passionate person, with a strong background in full-stack, front-end web development, UI/UX design, and related areas. He has a continuous effort to be the best in his professional doings."
+  },
+  {
+    image: "/images/clients/client_hasnainahmad.jpg",
+    name: "hasnainahmad619",
+    position: "Graphic Designer",
+    role: "",
+    country: "Pakistan",
+    message: "It would a good experience to work with him. He is very Nice and Polite."
+  }
+];
+
+function initTestimonialsSlider() {
+  const box = document.querySelector('.testimonial-box');
+  if (!box) return;
+
+  const quoteEl = box.querySelector('.testimonial-quote');
+  const nameEl = box.querySelector('.client-name');
+  const roleEl = box.querySelector('.client-role');
+  const avatarContainer = box.querySelector('.client-avatar');
+  const dotsContainer = box.querySelector('.dots-indicator');
+  const prevBtn = box.querySelector('.nav-arrow.prev');
+  const nextBtn = box.querySelector('.nav-arrow.next');
+
+  if (!quoteEl || !nameEl || !roleEl || !avatarContainer || !dotsContainer) return;
+
+  let currentIndex = 0;
+  let autoplayInterval = null;
+
+  dotsContainer.innerHTML = '';
+  TESTIMONIALS_DATA.forEach((_, idx) => {
+    const dot = document.createElement('span');
+    dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+    dot.style.cursor = 'pointer';
+    dot.addEventListener('click', () => {
+      showSlide(idx);
+      resetAutoplay();
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = dotsContainer.querySelectorAll('.dot');
+
+  function showSlide(index) {
+    const fadeEls = [quoteEl, nameEl, roleEl, avatarContainer];
+    fadeEls.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(10px)';
+      el.style.transition = 'all 0.3s ease';
+    });
+
+    setTimeout(() => {
+      currentIndex = index;
+      const data = TESTIMONIALS_DATA[currentIndex];
+
+      quoteEl.textContent = data.message;
+      nameEl.textContent = data.name;
+      
+      let roleText = '';
+      if (data.position && data.position !== 'Client') {
+        roleText = `${data.position} &bull; ${data.role ? data.role + ' &bull; ' : ''}${data.country}`;
+      } else {
+        roleText = `${data.position} &bull; ${data.country}`;
+      }
+      roleEl.innerHTML = roleText;
+
+      avatarContainer.innerHTML = '';
+      if (data.image) {
+        const img = document.createElement('img');
+        img.src = data.image;
+        img.alt = data.name;
+        img.className = 'avatar-img';
+        img.style.objectFit = 'cover';
+        avatarContainer.appendChild(img);
+      } else {
+        const div = document.createElement('div');
+        div.className = 'avatar-img';
+        div.textContent = data.name.substring(0, 2).toUpperCase();
+        avatarContainer.appendChild(div);
+      }
+
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentIndex);
+      });
+
+      fadeEls.forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    }, 300);
+  }
+
+  function nextSlide() {
+    let nextIdx = (currentIndex + 1) % TESTIMONIALS_DATA.length;
+    showSlide(nextIdx);
+  }
+
+  function prevSlide() {
+    let prevIdx = (currentIndex - 1 + TESTIMONIALS_DATA.length) % TESTIMONIALS_DATA.length;
+    showSlide(prevIdx);
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetAutoplay();
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetAutoplay();
+    });
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(nextSlide, 8000);
+  }
+
+  function resetAutoplay() {
+    clearInterval(autoplayInterval);
+    startAutoplay();
+  }
+
+  showSlide(0);
+  startAutoplay();
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -444,6 +644,9 @@ async function init() {
 
   // Start project link navigation
   initProjectLinks();
+
+  // Start testimonials slider
+  initTestimonialsSlider();
 }
 
 init();
