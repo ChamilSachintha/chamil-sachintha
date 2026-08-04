@@ -184,8 +184,9 @@ function loadSingleImage(index) {
   });
 }
 
-function loadQueue(indices, maxConcurrency = 6) {
+function loadQueue(indices, maxConcurrency = 6, onProgress = null) {
   let cursor = 0;
+  let finished = 0;
   return new Promise((resolve) => {
     if (indices.length === 0) return resolve();
     let active = 0;
@@ -199,6 +200,10 @@ function loadQueue(indices, maxConcurrency = 6) {
         active++;
         loadSingleImage(frameIdx).finally(() => {
           active--;
+          finished++;
+          if (onProgress) {
+            onProgress(finished, indices.length);
+          }
           next();
         });
       }
@@ -210,7 +215,12 @@ function loadQueue(indices, maxConcurrency = 6) {
 async function preloadImages() {
   // Pass 1: Load critical start frames (0..8) immediately
   const initialIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  await loadQueue(initialIndices, 8);
+  await loadQueue(initialIndices, 8, (finished, total) => {
+    const percent = Math.round((finished / total) * 100);
+    if (loaderText) {
+      loaderText.textContent = `Loading Experience ${percent}%`;
+    }
+  });
 
   // Dismiss loader immediately so site opens
   hideLoader();
