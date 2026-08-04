@@ -1715,6 +1715,10 @@ body {
     gap: 16px 24px;
   }
 
+  .footer-links {
+    display: none;
+  }
+
   .hz-timeline-wrapper {
     overflow-x: hidden;
     padding: 0;
