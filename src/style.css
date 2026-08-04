@@ -164,6 +164,14 @@ body {
   justify-content: center;
 }
 
+.logo-image {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--accent-orange);
+}
+
 .brand-text {
   display: flex;
   flex-direction: column;
