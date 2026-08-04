@@ -1644,7 +1644,8 @@ body {
   }
 
   .projects-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .process-grid {
@@ -1679,8 +1680,11 @@ body {
   }
 
   .project-filters {
-    justify-content: flex-start;
-    padding: 0 16px 8px 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
+    padding: 0 16px;
+    gap: 8px 12px;
   }
 
   .testimonial-box {
