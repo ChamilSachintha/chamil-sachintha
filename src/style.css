@@ -1710,6 +1710,63 @@ body {
     flex-wrap: wrap;
     gap: 16px 24px;
   }
+
+  .hz-timeline-wrapper {
+    overflow-x: hidden;
+    padding: 0;
+  }
+
+  .hz-timeline-track {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: auto;
+    width: 100%;
+    height: auto;
+    padding: 20px 0 20px 40px;
+  }
+
+  .hz-main-line {
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    width: 2px;
+    height: 100%;
+    transform: none;
+    background: linear-gradient(180deg, rgba(255, 85, 0, 0.2), rgba(255, 255, 255, 0.3), rgba(255, 85, 0, 0.2));
+  }
+
+  .hz-item,
+  .hz-item.hz-top,
+  .hz-item.hz-bottom {
+    width: 100%;
+    height: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 0 32px 0;
+  }
+
+  .hz-item:last-child,
+  .hz-item.hz-bottom:last-child {
+    padding-bottom: 0;
+  }
+
+  .hz-stem {
+    display: none;
+  }
+
+  .hz-node {
+    top: 18px;
+    left: 20px;
+    transform: translate(-50%, 0);
+    width: 36px;
+    height: 36px;
+  }
+
+  .hz-content {
+    width: 100%;
+    margin: 0;
+    padding: 16px;
+  }
 }
 
 /* Responsive adjustments for non-scrollable timeline in desktop and tablet views */
