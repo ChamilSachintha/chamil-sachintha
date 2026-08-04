@@ -636,6 +636,28 @@ function initTestimonialsSlider() {
   startAutoplay();
 }
 
+function initMobileNav() {
+  const toggleBtn = document.querySelector('.mobile-nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  const links = document.querySelectorAll('.nav-links .nav-link');
+
+  if (!toggleBtn || !navLinks) return;
+
+  toggleBtn.addEventListener('click', () => {
+    toggleBtn.classList.toggle('active');
+    navLinks.classList.toggle('active');
+    document.body.classList.toggle('no-scroll');
+  });
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      toggleBtn.classList.remove('active');
+      navLinks.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    });
+  });
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -659,6 +681,9 @@ async function init() {
 
   // Start testimonials slider
   initTestimonialsSlider();
+
+  // Start mobile navigation overlay
+  initMobileNav();
 }
 
 init();
