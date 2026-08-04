@@ -1493,16 +1493,22 @@ body {
 }
 
 .footer-bottom-links a {
-  font-size: 11px;
-  font-weight: 700;
   color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.3s ease;
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .footer-bottom-links a:hover {
   color: var(--accent-orange);
+  transform: translateY(-2px);
+}
+
+.footer-bottom-links svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 /* Mobile Nav Toggle Button */
