@@ -1735,6 +1735,10 @@ body {
     align-items: center;
   }
 
+  .navbar.navbar--hidden {
+    transform: translateY(0);
+  }
+
   .hz-timeline-wrapper {
     overflow-x: hidden;
     padding: 0;
