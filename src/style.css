@@ -1063,6 +1063,7 @@ body {
   flex-direction: column;
   gap: 16px;
   transition: opacity 0.35s ease, transform 0.35s ease;
+  position: relative;
 }
 
 .project-iframe-wrapper {
@@ -1083,6 +1084,7 @@ body {
   border: none;
   display: block;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .project-card-overlay-link {

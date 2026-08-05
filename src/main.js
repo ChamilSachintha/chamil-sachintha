@@ -422,14 +422,14 @@ function initProjectLinks() {
     }
 
     if (targetUrl) {
-      if (wrapper.querySelector('.project-card-overlay-link')) return;
+      if (card.querySelector('.project-card-overlay-link')) return;
 
       const link = document.createElement('a');
       link.href = targetUrl;
       link.target = '_blank';
       link.className = 'project-card-overlay-link';
       link.setAttribute('aria-label', 'Open project in new tab');
-      wrapper.appendChild(link);
+      card.appendChild(link);
     }
   });
 }
