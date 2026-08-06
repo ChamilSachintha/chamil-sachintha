@@ -683,19 +683,7 @@ function initContactForm() {
     // EmailJS credentials. Replace these placeholders with your actual keys.
     const serviceID = 'service_bnsk04d';
     const templateID = 'template_umgveoz';
-    const publicKey = 'YOUR_PUBLIC_KEY';
-
-    // Safe simulation fallback if keys are not configured yet
-    if (publicKey === 'YOUR_PUBLIC_KEY') {
-      setTimeout(() => {
-        if (status) {
-          status.textContent = 'Message sent! (Simulated - set EmailJS credentials in src/main.js to go live)';
-          status.className = 'form-status success';
-        }
-        form.reset();
-      }, 1200);
-      return;
-    }
+    const publicKey = 'EZ2RmN2bTuRdNMtnY';
 
     // Initialize EmailJS dynamically with the public key
     if (typeof emailjs !== 'undefined') {
