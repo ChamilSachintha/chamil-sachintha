@@ -1201,7 +1201,7 @@ body {
 /* Process Grid */
 .process-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -1238,8 +1238,17 @@ body {
   font-weight: 800;
   letter-spacing: 1px;
   color: #ffffff;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.process-step-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-orange);
+  margin-bottom: 12px;
+  display: block;
+  letter-spacing: 0.5px;
 }
 
 .process-desc {
