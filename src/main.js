@@ -668,6 +668,63 @@ function initMobileNav() {
   });
 }
 
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  if (!form) return;
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    if (status) {
+      status.textContent = 'Sending...';
+      status.className = 'form-status';
+    }
+
+    // EmailJS credentials. Replace these placeholders with your actual keys.
+    const serviceID = 'YOUR_SERVICE_ID';
+    const templateID = 'YOUR_TEMPLATE_ID';
+    const publicKey = 'YOUR_PUBLIC_KEY';
+
+    // Safe simulation fallback if keys are not configured yet
+    if (publicKey === 'YOUR_PUBLIC_KEY') {
+      setTimeout(() => {
+        if (status) {
+          status.textContent = 'Message sent! (Simulated - set EmailJS credentials in src/main.js to go live)';
+          status.className = 'form-status success';
+        }
+        form.reset();
+      }, 1200);
+      return;
+    }
+
+    // Initialize EmailJS dynamically with the public key
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init({
+        publicKey: publicKey
+      });
+
+      emailjs.sendForm(serviceID, templateID, this)
+        .then(() => {
+          if (status) {
+            status.textContent = 'Message sent successfully!';
+            status.className = 'form-status success';
+          }
+          form.reset();
+        }, (error) => {
+          if (status) {
+            status.textContent = `Failed to send message: ${error.text || JSON.stringify(error)}`;
+            status.className = 'form-status error';
+          }
+        });
+    } else {
+      if (status) {
+        status.textContent = 'Error: EmailJS library not loaded. Check internet connection.';
+        status.className = 'form-status error';
+      }
+    }
+  });
+}
+
 async function init() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
@@ -694,6 +751,9 @@ async function init() {
 
   // Start mobile navigation overlay
   initMobileNav();
+
+  // Initialize contact form system
+  initContactForm();
 }
 
 init();

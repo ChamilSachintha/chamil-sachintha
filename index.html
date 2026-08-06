@@ -975,31 +975,54 @@
       <section id="contact" class="section cta-section">
         <div class="container">
           <div class="glass-card cta-card">
-            <div class="cta-header">
-              <span class="section-tag">LET'S WORK TOGETHER</span>
-              <h2 class="cta-title">Have a project in mind?</h2>
-              <p class="cta-subtitle">
-                I'm always excited to collaborate on meaningful projects and bring ideas to life. Let's create something
-                great together!
-              </p>
-            </div>
+            <div class="contact-grid">
+              <!-- Left Column: Current Info Details -->
+              <div class="contact-info-col">
+                <div class="cta-header">
+                  <span class="section-tag">LET'S WORK TOGETHER</span>
+                  <h2 class="cta-title">Have a project in mind?</h2>
+                  <p class="cta-subtitle">
+                    I'm always excited to collaborate on meaningful projects and bring ideas to life. Let's create something
+                    great together!
+                  </p>
+                </div>
 
-            <div class="contact-details-row">
-              <div class="contact-item">
-                <span class="item-label">EMAIL</span>
-                <a href="mailto:chamilsachinthacr7@gmail.com" class="item-value">chamilsachinthacr7@gmail.com</a>
+                <div class="contact-items-list">
+                  <div class="contact-item">
+                    <span class="item-label">EMAIL</span>
+                    <a href="mailto:chamilsachinthacr7@gmail.com" class="item-value">chamilsachinthacr7@gmail.com</a>
+                  </div>
+                  <div class="contact-item">
+                    <span class="item-label">PHONE</span>
+                    <a href="tel:+94715684041" class="item-value">+94 71 568 40 41</a>
+                  </div>
+                  <div class="contact-item">
+                    <span class="item-label">LOCATION</span>
+                    <span class="item-value">Colombo, Sri Lanka</span>
+                  </div>
+                </div>
               </div>
-              <div class="contact-item">
-                <span class="item-label">PHONE</span>
-                <a href="tel:+94715684041" class="item-value">+94 71 568 40 41</a>
-              </div>
-              <div class="contact-item">
-                <span class="item-label">LOCATION</span>
-                <span class="item-value">Colombo, Sri Lanka</span>
-              </div>
-              <div class="contact-action">
-                <a href="mailto:chamilsachinthacr7@gmail.com" class="btn btn-primary">GET IN TOUCH <span
-                    class="arrow">&rarr;</span></a>
+
+              <!-- Right Column: Contact Form -->
+              <div class="contact-form-col">
+                <form id="contact-form" class="contact-form">
+                  <div class="form-group">
+                    <input type="text" name="user_name" id="form-name" required placeholder="Name" />
+                  </div>
+                  <div class="form-group">
+                    <input type="email" name="user_email" id="form-email" required placeholder="Email" />
+                  </div>
+                  <div class="form-group">
+                    <input type="tel" name="user_phone" id="form-phone" required placeholder="Phone Number" />
+                  </div>
+                  <div class="form-group">
+                    <textarea name="message" id="form-message" rows="4" required placeholder="Message"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary form-submit-btn">
+                    SEND MESSAGE <span class="arrow">&rarr;</span>
+                  </button>
+                  <div id="form-status" class="form-status"></div>
+                </form>
               </div>
             </div>
           </div>
@@ -1048,7 +1071,8 @@
     </footer>
   </div>
 
-  <script type="module" src="/src/main.js"></script>
-</body>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 
 </html>
