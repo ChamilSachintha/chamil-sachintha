@@ -1199,9 +1199,14 @@ body {
 }
 
 /* Process Grid */
+.process-section .container {
+  max-width: 100%;
+  padding: 0 40px;
+}
+
 .process-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 20px;
 }
 
@@ -1248,8 +1253,6 @@ body {
   transition: border-color 0.3s ease, right 0.3s ease;
 }
 
-.process-card:nth-child(4)::after,
-.process-card:nth-child(4)::before,
 .process-card:last-child::after,
 .process-card:last-child::before {
   display: none;
