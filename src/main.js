@@ -682,7 +682,7 @@ function initContactForm() {
 
     // EmailJS credentials. Replace these placeholders with your actual keys.
     const serviceID = 'service_pcaq6a6';
-    const templateID = 'template_umgveoz';
+    const templateID = 'template_g3jses3';
     const publicKey = 'EZ2RmN2bTuRdNMtnY';
 
     // Initialize EmailJS dynamically with the public key
