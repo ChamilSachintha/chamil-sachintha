@@ -1806,8 +1806,17 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .process-card::after {
+  .process-card::after,
+  .process-card::before {
     display: block;
+  }
+
+  .process-card:nth-child(3n)::after,
+  .process-card:nth-child(3n)::before {
+    display: block;
+  }
+
+  .process-card::after {
     right: auto;
     left: 50%;
     top: auto;
@@ -1818,7 +1827,6 @@ body {
   }
 
   .process-card::before {
-    display: block;
     right: auto;
     left: 50%;
     top: auto;
