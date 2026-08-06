@@ -1224,25 +1224,44 @@ body {
 .process-card::after {
   content: "";
   position: absolute;
-  right: -14px;
+  right: -20px;
   top: 50%;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid var(--accent-orange);
-  border-right: 2px solid var(--accent-orange);
-  transform: translateY(-50%) rotate(45deg);
-  opacity: 0.5;
+  width: 20px;
+  height: 2px;
+  background: rgba(255, 85, 0, 0.25);
+  transform: translateY(-50%);
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: background 0.3s ease;
+}
+
+.process-card::before {
+  content: "";
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid rgba(255, 85, 0, 0.4);
+  border-right: 2px solid rgba(255, 85, 0, 0.4);
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  transition: border-color 0.3s ease, right 0.3s ease;
 }
 
 .process-card:nth-child(4)::after,
-.process-card:last-child::after {
+.process-card:nth-child(4)::before,
+.process-card:last-child::after,
+.process-card:last-child::before {
   display: none;
 }
 
 .process-card:hover::after {
-  opacity: 1;
+  background: var(--accent-orange);
+}
+
+.process-card:hover::before {
+  border-color: var(--accent-orange);
+  right: -18px;
 }
 
 .process-top {
@@ -1623,12 +1642,15 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .process-card::after {
+  .process-card::after,
+  .process-card::before {
     display: block;
   }
 
   .process-card:nth-child(3n)::after,
-  .process-card:last-child::after {
+  .process-card:nth-child(3n)::before,
+  .process-card:last-child::after,
+  .process-card:last-child::before {
     display: none;
   }
 }
@@ -1710,12 +1732,30 @@ body {
     right: auto;
     left: 50%;
     top: auto;
-    bottom: -14px;
-    transform: translateX(-50%) rotate(135deg);
+    bottom: -20px;
+    width: 2px;
+    height: 20px;
+    transform: translateX(-50%);
   }
 
-  .process-card:last-child::after {
+  .process-card::before {
+    display: block;
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: -16px;
+    transform: translateX(-50%) rotate(135deg);
+    transition: border-color 0.3s ease, bottom 0.3s ease;
+  }
+
+  .process-card:last-child::after,
+  .process-card:last-child::before {
     display: none;
+  }
+
+  .process-card:hover::before {
+    right: auto;
+    bottom: -18px;
   }
 
   .contact-details-row {
