@@ -393,8 +393,8 @@ function initProjectFilters() {
     });
   });
 
-  // Apply default 'all' filter on load to select 2 random projects per category
-  applyFilter('all');
+  // Apply default 'ui-ux' filter on load
+  applyFilter('ui-ux');
 }
 
 function initProjectLinks() {
