@@ -212,154 +212,129 @@ function loadQueue(indices, maxConcurrency = 6, onProgress = null) {
   });
 }
 
+// Comprehensive list of all static images used throughout the website
+const CRITICAL_WEBSITE_IMAGES = [
+  // Work section mockups
+  '/images/spices_website.jpg',
+  '/images/star_wars_odyssey.jpg',
+  '/images/portfolio_mockup.png',
+  '/images/transcription_mockup.png',
+  '/images/it_company_mockup.png',
+  '/images/portfolio2_mockup.png',
+  '/images/student_viewer_mockup.png',
+  // Education section photos
+  '/images/graduate%201.jpg',
+  '/images/graduate%202.jpg',
+  '/images/graduate%203.jpg',
+  // Brand logo
+  '/images/logo.png',
+  // Client testimonials
+  '/images/clients/client_cannoneye.jpg',
+  '/images/clients/client_DamithDisanayaka.jpg',
+  '/images/clients/client_DineshPiyasamara.jpg',
+  '/images/clients/client_entzibasllari.jpg',
+  '/images/clients/client_familiaoffice.jpg',
+  '/images/clients/client_hasnainahmad.jpg',
+  '/images/clients/client_hussain629.jpg',
+  '/images/clients/client_IshanDahanayaka.jpg',
+  '/images/clients/client_sergiosombrao.jpg',
+  '/images/clients/client_vasile96.jpg'
+];
+
+function preloadImageFile(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = url;
+    const finish = () => {
+      if (typeof img.decode === 'function') {
+        img.decode().catch(() => {}).finally(() => resolve(img));
+      } else {
+        resolve(img);
+      }
+    };
+    if (img.complete && img.naturalWidth > 0) {
+      finish();
+    } else {
+      img.onload = finish;
+      img.onerror = finish;
+    }
+  });
+}
+
 async function preloadImages() {
   const loaderState = window.__loaderState || { percent: 0, timer: null };
 
-  // Place all Work section cards inside the active viewport behind #loader
-  // so every Behance iframe IntersectionObserver and image eagerly loads & renders
-  const projectCards = Array.from(document.querySelectorAll('.projects-grid .project-card'));
-  projectCards.forEach((card) => card.classList.add('project-card--preloading'));
-
-  // 1. Collect all DOM images (Work section mockups, graduation carousel, logo, etc.)
-  const domImages = Array.from(document.querySelectorAll('img'));
-
-  // 2. Collect all Testimonial avatar image URLs
-  const testimonialUrls = TESTIMONIALS_DATA.map((t) => t.image).filter(Boolean);
-
-  // 3. Collect all Work section Behance iframes
-  const domIframes = Array.from(document.querySelectorAll('.project-card iframe'));
-
-  // 4. Collect initial & keyframe scroll animation frames
-  const primaryFrameIndices = [];
-  for (let i = 0; i < 16; i++) {
-    primaryFrameIndices.push(i);
-  }
-  for (let i = 16; i < TOTAL_FRAMES; i += 3) {
-    primaryFrameIndices.push(i);
+  // Initial scroll animation frames (0..35) for instant hero scroll readiness
+  const initialFrameIndices = [];
+  for (let i = 0; i <= 35; i++) {
+    initialFrameIndices.push(i);
   }
 
-  const totalTasks =
-    domImages.length +
-    testimonialUrls.length +
-    domIframes.length +
-    primaryFrameIndices.length +
-    1; // +1 for window load
-  let completedTasks = 0;
+  // Active UI/UX Behance iframes visible on initial page load
+  const activeIframes = Array.from(
+    document.querySelectorAll('.project-card[data-category="ui-ux"] iframe')
+  );
 
-  const markTaskDone = () => {
-    completedTasks++;
+  let realFinished = 0;
+  const realTotal = CRITICAL_WEBSITE_IMAGES.length + initialFrameIndices.length + activeIframes.length + 1; // +1 for window load
+
+  const onTaskDone = () => {
+    realFinished++;
   };
 
-  // Task A: Load & decode every DOM <img>
-  const domImagePromises = domImages.map((img) => {
-    img.loading = 'eager';
-    return new Promise((resolve) => {
-      const finish = () => {
-        if (typeof img.decode === 'function') {
-          img.decode().catch(() => {}).finally(() => {
-            markTaskDone();
-            resolve();
-          });
-        } else {
-          markTaskDone();
+  // 1. Download & decode ALL website images in parallel
+  const imagesPromise = Promise.all(
+    CRITICAL_WEBSITE_IMAGES.map((url) => preloadImageFile(url).then(onTaskDone))
+  );
+
+  // 2. Preload initial canvas frames
+  const framesPromise = loadQueue(initialFrameIndices, 8, () => {
+    onTaskDone();
+  });
+
+  // 3. Await active iframes
+  const iframesPromise = Promise.all(
+    activeIframes.map((iframe) => {
+      return new Promise((resolve) => {
+        const done = () => {
+          onTaskDone();
           resolve();
-        }
-      };
+        };
+        const timer = setTimeout(done, 5000);
+        iframe.addEventListener('load', () => {
+          clearTimeout(timer);
+          done();
+        }, { once: true });
+      });
+    })
+  );
 
-      if (img.complete && img.naturalWidth > 0) {
-        finish();
-      } else {
-        img.addEventListener('load', finish, { once: true });
-        img.addEventListener('error', finish, { once: true });
-      }
-    });
-  });
-
-  // Task B: Preload & decode all Testimonial avatar images
-  const testimonialPromises = testimonialUrls.map((url) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = url;
-      const finish = () => {
-        if (typeof img.decode === 'function') {
-          img.decode().catch(() => {}).finally(() => {
-            markTaskDone();
-            resolve();
-          });
-        } else {
-          markTaskDone();
-          resolve();
-        }
-      };
-      img.onload = finish;
-      img.onerror = finish;
-    });
-  });
-
-  // Task C: Wait for all Work section iframes to load and settle their cover images
-  const iframePromises = domIframes.map((iframe) => {
-    return new Promise((resolve) => {
-      let settled = false;
-      const done = () => {
-        if (settled) return;
-        settled = true;
-        markTaskDone();
-        resolve();
-      };
-
-      // Safety timeout so an unresponsive external embed cannot hang the loader forever
-      const safetyTimer = setTimeout(done, 7500);
-
-      iframe.addEventListener(
-        'load',
-        () => {
-          // Allow 500ms after iframe load while intersecting viewport so cover image paints
-          setTimeout(() => {
-            clearTimeout(safetyTimer);
-            done();
-          }, 500);
-        },
-        { once: true }
-      );
-    });
-  });
-
-  // Task D: Preload scroll animation frames
-  const framesPromise = loadQueue(primaryFrameIndices, 10, () => {
-    markTaskDone();
-  });
-
-  // Task E: Wait for window load event
-  const windowLoadPromise = new Promise((resolve) => {
+  // 4. Await window load
+  const windowPromise = new Promise((resolve) => {
     if (document.readyState === 'complete') {
-      markTaskDone();
+      onTaskDone();
       resolve();
     } else {
       const done = () => {
-        markTaskDone();
+        onTaskDone();
         resolve();
       };
-      const safetyTimer = setTimeout(done, 8000);
-      window.addEventListener(
-        'load',
-        () => {
-          clearTimeout(safetyTimer);
-          done();
-        },
-        { once: true }
-      );
+      const timer = setTimeout(done, 5000);
+      window.addEventListener('load', () => {
+        clearTimeout(timer);
+        done();
+      }, { once: true });
     }
   });
 
-  const allWebsiteAssetsPromise = Promise.all([
-    ...domImagePromises,
-    ...testimonialPromises,
-    ...iframePromises,
+  const fullWebsiteReadyPromise = Promise.all([
+    imagesPromise,
     framesPromise,
-    windowLoadPromise,
+    iframesPromise,
+    windowPromise
   ]);
 
-  // Phase 1: Ensure the 0% -> 90% fake gradual counter completes smoothly first
+  // Phase 1: Wait until the simulated gradual counter completes 0% -> 90%
   await new Promise((resolve) => {
     const checkNinety = setInterval(() => {
       if (loaderState.percent >= 90) {
@@ -373,43 +348,52 @@ async function preloadImages() {
     }, 20);
   });
 
-  // Phase 2: 90% -> 100% driven by actual full website loading progress
-  await new Promise((resolve) => {
-    const finalTimer = setInterval(() => {
-      const realFraction = totalTasks > 0 ? completedTasks / totalTasks : 1;
-      const targetRealPercent = 90 + Math.floor(realFraction * 10);
+  // Phase 2: Progress from 90% -> 100% tied directly to actual website asset readiness
+  let isFullyLoaded = false;
+  fullWebsiteReadyPromise.then(() => {
+    isFullyLoaded = true;
+  });
 
-      if (loaderState.percent < targetRealPercent && loaderState.percent < 100) {
-        loaderState.percent += 1;
+  await new Promise((resolve) => {
+    const finalStepTimer = setInterval(() => {
+      const realRatio = realTotal > 0 ? realFinished / realTotal : 1;
+      const targetPercent = 90 + Math.floor(realRatio * 10);
+
+      if (loaderState.percent < targetPercent && loaderState.percent < 99) {
+        loaderState.percent++;
         if (loaderText) {
           loaderText.textContent = `Loading Experience ${loaderState.percent}%`;
         }
       }
 
-      if (loaderState.percent >= 100 && completedTasks >= totalTasks) {
-        clearInterval(finalTimer);
-        resolve();
+      // Only hit 100% when all website components are fully downloaded and decoded
+      if (isFullyLoaded) {
+        if (loaderState.percent < 100) {
+          loaderState.percent++;
+          if (loaderText) {
+            loaderText.textContent = `Loading Experience ${loaderState.percent}%`;
+          }
+        }
+        if (loaderState.percent >= 100) {
+          clearInterval(finalStepTimer);
+          resolve();
+        }
       }
-    }, 70);
+    }, 60);
   });
 
-  await allWebsiteAssetsPromise;
+  await fullWebsiteReadyPromise;
 
-  // Restore project cards from preloading viewport position to normal grid layout
-  projectCards.forEach((card) => card.classList.remove('project-card--preloading'));
-
-  // Brief pause at 100% before dismissing loader so the user sees completion
-  await new Promise((r) => setTimeout(r, 150));
+  // Brief pause at 100% so the user perceives completion
+  await new Promise((r) => setTimeout(r, 200));
   hideLoader();
 
-  // Pass 3: Fill in any remaining in-between scroll frames in background
+  // Background: Load remaining in-between scroll frames
   const remainingIndices = [];
-  for (let i = 0; i < TOTAL_FRAMES; i++) {
-    if (!images[i]) {
-      remainingIndices.push(i);
-    }
+  for (let i = 36; i < TOTAL_FRAMES; i++) {
+    remainingIndices.push(i);
   }
-  loadQueue(remainingIndices, 8);
+  loadQueue(remainingIndices, 6);
 }
 
 function initGraduationCarousel() {
@@ -487,70 +471,20 @@ function initProjectFilters() {
 
   if (filterTabs.length === 0 || projectCards.length === 0) return;
 
-  function setCardVisible(card, visible) {
-    if (visible) {
-      card.classList.remove('project-card--hidden');
-      card.inert = false;
-      card.offsetHeight; // Force reflow
-      card.style.opacity = '1';
-      card.style.transform = 'scale(1)';
-    } else {
-      card.classList.add('project-card--hidden');
-      card.inert = true;
-    }
-  }
-
-  function applyFilter(filterValue, immediate = false) {
-    if (filterValue === 'all') {
-      const categories = ['ui-ux', 'web-mobile', 'branding', 'graphic-design', 'digital-arts'];
-      const groupedCards = {};
-      
-      categories.forEach(cat => {
-        groupedCards[cat] = [];
-      });
-      
-      projectCards.forEach(card => {
-        const cat = card.getAttribute('data-category');
-        if (groupedCards[cat]) {
-          groupedCards[cat].push(card);
-        }
-      });
-      
-      const selectedCards = new Set();
-      
-      categories.forEach(cat => {
-        const cards = groupedCards[cat];
-        if (cards.length <= 2) {
-          cards.forEach(c => selectedCards.add(c));
-        } else {
-          const shuffled = [...cards].sort(() => 0.5 - Math.random());
-          selectedCards.add(shuffled[0]);
-          selectedCards.add(shuffled[1]);
-        }
-      });
-      
-      projectCards.forEach(card => {
-        const isMatch = selectedCards.has(card);
-        if (immediate) {
-          setCardVisible(card, isMatch);
-          return;
-        }
+  function applyFilter(filterValue) {
+    projectCards.forEach(card => {
+      const isMatch = card.getAttribute('data-category') === filterValue;
+      if (isMatch) {
+        card.style.display = 'flex';
+        card.offsetHeight; // Force reflow
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      } else {
+        card.style.display = 'none';
         card.style.opacity = '0';
         card.style.transform = 'scale(0.95)';
-        setTimeout(() => setCardVisible(card, isMatch), 350);
-      });
-    } else {
-      projectCards.forEach(card => {
-        const isMatch = card.getAttribute('data-category') === filterValue;
-        if (immediate) {
-          setCardVisible(card, isMatch);
-          return;
-        }
-        card.style.opacity = '0';
-        card.style.transform = 'scale(0.95)';
-        setTimeout(() => setCardVisible(card, isMatch), 350);
-      });
-    }
+      }
+    });
   }
 
   filterTabs.forEach(tab => {
@@ -559,12 +493,19 @@ function initProjectFilters() {
       tab.classList.add('active');
 
       const filterValue = tab.getAttribute('data-filter');
-      applyFilter(filterValue, false);
+
+      projectCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+      });
+      setTimeout(() => {
+        applyFilter(filterValue);
+      }, 250);
     });
   });
 
   // Apply default 'ui-ux' filter immediately on load
-  applyFilter('ui-ux', true);
+  applyFilter('ui-ux');
 }
 
 function initProjectLinks() {
