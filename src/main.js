@@ -214,19 +214,152 @@ function loadQueue(indices, maxConcurrency = 6, onProgress = null) {
 
 async function preloadImages() {
   const loaderState = window.__loaderState || { percent: 0, timer: null };
-  let realFraction = 0;
 
-  // Start loading critical initial frames (0..15) in the background immediately
-  const initialIndices = [];
+  // Place all Work section cards inside the active viewport behind #loader
+  // so every Behance iframe IntersectionObserver and image eagerly loads & renders
+  const projectCards = Array.from(document.querySelectorAll('.projects-grid .project-card'));
+  projectCards.forEach((card) => card.classList.add('project-card--preloading'));
+
+  // 1. Collect all DOM images (Work section mockups, graduation carousel, logo, etc.)
+  const domImages = Array.from(document.querySelectorAll('img'));
+
+  // 2. Collect all Testimonial avatar image URLs
+  const testimonialUrls = TESTIMONIALS_DATA.map((t) => t.image).filter(Boolean);
+
+  // 3. Collect all Work section Behance iframes
+  const domIframes = Array.from(document.querySelectorAll('.project-card iframe'));
+
+  // 4. Collect initial & keyframe scroll animation frames
+  const primaryFrameIndices = [];
   for (let i = 0; i < 16; i++) {
-    initialIndices.push(i);
+    primaryFrameIndices.push(i);
+  }
+  for (let i = 16; i < TOTAL_FRAMES; i += 3) {
+    primaryFrameIndices.push(i);
   }
 
-  const initialLoadPromise = loadQueue(initialIndices, 6, (finished, total) => {
-    realFraction = finished / total;
+  const totalTasks =
+    domImages.length +
+    testimonialUrls.length +
+    domIframes.length +
+    primaryFrameIndices.length +
+    1; // +1 for window load
+  let completedTasks = 0;
+
+  const markTaskDone = () => {
+    completedTasks++;
+  };
+
+  // Task A: Load & decode every DOM <img>
+  const domImagePromises = domImages.map((img) => {
+    img.loading = 'eager';
+    return new Promise((resolve) => {
+      const finish = () => {
+        if (typeof img.decode === 'function') {
+          img.decode().catch(() => {}).finally(() => {
+            markTaskDone();
+            resolve();
+          });
+        } else {
+          markTaskDone();
+          resolve();
+        }
+      };
+
+      if (img.complete && img.naturalWidth > 0) {
+        finish();
+      } else {
+        img.addEventListener('load', finish, { once: true });
+        img.addEventListener('error', finish, { once: true });
+      }
+    });
   });
 
-  // Ensure the 0% -> 90% gradual counter completes smoothly first
+  // Task B: Preload & decode all Testimonial avatar images
+  const testimonialPromises = testimonialUrls.map((url) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+      const finish = () => {
+        if (typeof img.decode === 'function') {
+          img.decode().catch(() => {}).finally(() => {
+            markTaskDone();
+            resolve();
+          });
+        } else {
+          markTaskDone();
+          resolve();
+        }
+      };
+      img.onload = finish;
+      img.onerror = finish;
+    });
+  });
+
+  // Task C: Wait for all Work section iframes to load and settle their cover images
+  const iframePromises = domIframes.map((iframe) => {
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        markTaskDone();
+        resolve();
+      };
+
+      // Safety timeout so an unresponsive external embed cannot hang the loader forever
+      const safetyTimer = setTimeout(done, 7500);
+
+      iframe.addEventListener(
+        'load',
+        () => {
+          // Allow 500ms after iframe load while intersecting viewport so cover image paints
+          setTimeout(() => {
+            clearTimeout(safetyTimer);
+            done();
+          }, 500);
+        },
+        { once: true }
+      );
+    });
+  });
+
+  // Task D: Preload scroll animation frames
+  const framesPromise = loadQueue(primaryFrameIndices, 10, () => {
+    markTaskDone();
+  });
+
+  // Task E: Wait for window load event
+  const windowLoadPromise = new Promise((resolve) => {
+    if (document.readyState === 'complete') {
+      markTaskDone();
+      resolve();
+    } else {
+      const done = () => {
+        markTaskDone();
+        resolve();
+      };
+      const safetyTimer = setTimeout(done, 8000);
+      window.addEventListener(
+        'load',
+        () => {
+          clearTimeout(safetyTimer);
+          done();
+        },
+        { once: true }
+      );
+    }
+  });
+
+  const allWebsiteAssetsPromise = Promise.all([
+    ...domImagePromises,
+    ...testimonialPromises,
+    ...iframePromises,
+    framesPromise,
+    windowLoadPromise,
+  ]);
+
+  // Phase 1: Ensure the 0% -> 90% fake gradual counter completes smoothly first
   await new Promise((resolve) => {
     const checkNinety = setInterval(() => {
       if (loaderState.percent >= 90) {
@@ -240,46 +373,43 @@ async function preloadImages() {
     }, 20);
   });
 
-  // Transition from 90% -> 100% tied to actual loading progress + deliberate pacing
+  // Phase 2: 90% -> 100% driven by actual full website loading progress
   await new Promise((resolve) => {
     const finalTimer = setInterval(() => {
+      const realFraction = totalTasks > 0 ? completedTasks / totalTasks : 1;
       const targetRealPercent = 90 + Math.floor(realFraction * 10);
+
       if (loaderState.percent < targetRealPercent && loaderState.percent < 100) {
         loaderState.percent += 1;
         if (loaderText) {
           loaderText.textContent = `Loading Experience ${loaderState.percent}%`;
         }
       }
-      if (loaderState.percent >= 100) {
+
+      if (loaderState.percent >= 100 && completedTasks >= totalTasks) {
         clearInterval(finalTimer);
         resolve();
       }
-    }, 85);
+    }, 70);
   });
 
-  await initialLoadPromise;
+  await allWebsiteAssetsPromise;
+
+  // Restore project cards from preloading viewport position to normal grid layout
+  projectCards.forEach((card) => card.classList.remove('project-card--preloading'));
 
   // Brief pause at 100% before dismissing loader so the user sees completion
   await new Promise((r) => setTimeout(r, 150));
   hideLoader();
 
-  // Pass 2: Load keyframes across the entire scroll length (every 4th frame)
-  const keyframeIndices = [];
-  for (let i = 16; i < TOTAL_FRAMES; i += 4) {
-    keyframeIndices.push(i);
-  }
-  
-  // Load keyframes in parallel worker pool
-  loadQueue(keyframeIndices, 6).then(() => {
-    // Pass 3: Fill in remaining in-between frames in background
-    const remainingIndices = [];
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      if (!images[i]) {
-        remainingIndices.push(i);
-      }
+  // Pass 3: Fill in any remaining in-between scroll frames in background
+  const remainingIndices = [];
+  for (let i = 0; i < TOTAL_FRAMES; i++) {
+    if (!images[i]) {
+      remainingIndices.push(i);
     }
-    loadQueue(remainingIndices, 6);
-  });
+  }
+  loadQueue(remainingIndices, 8);
 }
 
 function initGraduationCarousel() {
@@ -357,7 +487,20 @@ function initProjectFilters() {
 
   if (filterTabs.length === 0 || projectCards.length === 0) return;
 
-  function applyFilter(filterValue) {
+  function setCardVisible(card, visible) {
+    if (visible) {
+      card.classList.remove('project-card--hidden');
+      card.inert = false;
+      card.offsetHeight; // Force reflow
+      card.style.opacity = '1';
+      card.style.transform = 'scale(1)';
+    } else {
+      card.classList.add('project-card--hidden');
+      card.inert = true;
+    }
+  }
+
+  function applyFilter(filterValue, immediate = false) {
     if (filterValue === 'all') {
       const categories = ['ui-ux', 'web-mobile', 'branding', 'graphic-design', 'digital-arts'];
       const groupedCards = {};
@@ -387,36 +530,25 @@ function initProjectFilters() {
       });
       
       projectCards.forEach(card => {
+        const isMatch = selectedCards.has(card);
+        if (immediate) {
+          setCardVisible(card, isMatch);
+          return;
+        }
         card.style.opacity = '0';
         card.style.transform = 'scale(0.95)';
-        
-        setTimeout(() => {
-          if (selectedCards.has(card)) {
-            card.style.display = 'flex';
-            card.offsetHeight; // Force reflow
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1)';
-          } else {
-            card.style.display = 'none';
-          }
-        }, 350);
+        setTimeout(() => setCardVisible(card, isMatch), 350);
       });
     } else {
       projectCards.forEach(card => {
+        const isMatch = card.getAttribute('data-category') === filterValue;
+        if (immediate) {
+          setCardVisible(card, isMatch);
+          return;
+        }
         card.style.opacity = '0';
         card.style.transform = 'scale(0.95)';
-        
-        setTimeout(() => {
-          const isMatch = card.getAttribute('data-category') === filterValue;
-          if (isMatch) {
-            card.style.display = 'flex';
-            card.offsetHeight; // Force reflow
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1)';
-          } else {
-            card.style.display = 'none';
-          }
-        }, 350);
+        setTimeout(() => setCardVisible(card, isMatch), 350);
       });
     }
   }
@@ -427,12 +559,12 @@ function initProjectFilters() {
       tab.classList.add('active');
 
       const filterValue = tab.getAttribute('data-filter');
-      applyFilter(filterValue);
+      applyFilter(filterValue, false);
     });
   });
 
-  // Apply default 'ui-ux' filter on load
-  applyFilter('ui-ux');
+  // Apply default 'ui-ux' filter immediately on load
+  applyFilter('ui-ux', true);
 }
 
 function initProjectLinks() {

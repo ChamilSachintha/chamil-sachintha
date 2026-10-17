@@ -1066,6 +1066,19 @@ body {
   position: relative;
 }
 
+.project-card--preloading,
+.project-card--hidden {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 320px !important;
+  height: 250px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+  overflow: hidden !important;
+}
+
 .project-iframe-wrapper {
   position: relative;
   width: 100%;
