@@ -20,6 +20,22 @@
     <div class="loader-spinner"></div>
     <div id="loader-text">Loading Experience 0%</div>
   </div>
+  <script>
+    (function () {
+      var el = document.getElementById('loader-text');
+      var state = { percent: 0, timer: null };
+      window.__loaderState = state;
+      state.timer = setInterval(function () {
+        if (state.percent < 90) {
+          state.percent += 1;
+          if (el) el.textContent = 'Loading Experience ' + state.percent + '%';
+        } else {
+          clearInterval(state.timer);
+          state.timer = null;
+        }
+      }, 22);
+    })();
+  </script>
 
   <!-- Canvas Background for Scroll Animation -->
   <div id="canvas-container">
@@ -1103,7 +1119,7 @@
     </footer>
   </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="module" src="/src/main.js"></script>
   </body>
 

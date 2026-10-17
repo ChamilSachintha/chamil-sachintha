@@ -213,21 +213,59 @@ function loadQueue(indices, maxConcurrency = 6, onProgress = null) {
 }
 
 async function preloadImages() {
-  // Pass 1: Load critical start frames (0..8) immediately
-  const initialIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  await loadQueue(initialIndices, 8, (finished, total) => {
-    const percent = Math.round((finished / total) * 100);
-    if (loaderText) {
-      loaderText.textContent = `Loading Experience ${percent}%`;
-    }
+  const loaderState = window.__loaderState || { percent: 0, timer: null };
+  let realFraction = 0;
+
+  // Start loading critical initial frames (0..15) in the background immediately
+  const initialIndices = [];
+  for (let i = 0; i < 16; i++) {
+    initialIndices.push(i);
+  }
+
+  const initialLoadPromise = loadQueue(initialIndices, 6, (finished, total) => {
+    realFraction = finished / total;
   });
 
-  // Dismiss loader immediately so site opens
+  // Ensure the 0% -> 90% gradual counter completes smoothly first
+  await new Promise((resolve) => {
+    const checkNinety = setInterval(() => {
+      if (loaderState.percent >= 90) {
+        clearInterval(checkNinety);
+        if (loaderState.timer) {
+          clearInterval(loaderState.timer);
+          loaderState.timer = null;
+        }
+        resolve();
+      }
+    }, 20);
+  });
+
+  // Transition from 90% -> 100% tied to actual loading progress + deliberate pacing
+  await new Promise((resolve) => {
+    const finalTimer = setInterval(() => {
+      const targetRealPercent = 90 + Math.floor(realFraction * 10);
+      if (loaderState.percent < targetRealPercent && loaderState.percent < 100) {
+        loaderState.percent += 1;
+        if (loaderText) {
+          loaderText.textContent = `Loading Experience ${loaderState.percent}%`;
+        }
+      }
+      if (loaderState.percent >= 100) {
+        clearInterval(finalTimer);
+        resolve();
+      }
+    }, 85);
+  });
+
+  await initialLoadPromise;
+
+  // Brief pause at 100% before dismissing loader so the user sees completion
+  await new Promise((r) => setTimeout(r, 150));
   hideLoader();
 
   // Pass 2: Load keyframes across the entire scroll length (every 4th frame)
   const keyframeIndices = [];
-  for (let i = 12; i < TOTAL_FRAMES; i += 4) {
+  for (let i = 16; i < TOTAL_FRAMES; i += 4) {
     keyframeIndices.push(i);
   }
   
